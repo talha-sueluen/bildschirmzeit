@@ -1,4 +1,4 @@
-datum,gesamte bildschirmzeit,app1_adi,app1_sure,app2_adi,app2_sure,app3_adi,app3_sure,app4_adi,app4_sure,app5_adi,app5_sure
+datum,gesamte bildschirmzeit,app1_name,app1_zeit,app2_name,app2_zeit,app3_name,app3_zeit,app4_name,app4_zeit,app5_name,app5_zeit
 2025-03-16,356,Instagram,106,Moodle,75,Netflix,29,WhatsApp,25,Youtube,17
 2025-03-17,400,Instagram,180,Youtube,64,WhatsApp,41,Chrome,23,X,10
 2025-03-18,296,Instagram,89,Youtube,62,X,35,Moodle,21,WhatsApp,17

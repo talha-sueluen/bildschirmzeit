@@ -62,8 +62,8 @@ def melt_apps(df: pd.DataFrame) -> pd.DataFrame:
     records = []
     for _, row in df.iterrows():
         for i in range(1, 6):
-            app = row.get(f"app{i}_adi")
-            mins = row.get(f"app{i}_sure")
+            app = row.get(f"app{i}_name")
+            mins = row.get(f"app{i}_zeit")
             if pd.notna(app) and pd.notna(mins):
                 records.append({
                     "datum": row["datum"],
@@ -340,8 +340,8 @@ def show_weekly_raw(df_raw: pd.DataFrame) -> None:
     for _, r in week_df.iterrows():
         apps = []
         for i in range(1, 6):
-            name = r.get(f"app{i}_adi")
-            mins = r.get(f"app{i}_sure")
+            name = r.get(f"app{i}_name")
+            mins = r.get(f"app{i}_zeit")
             if pd.notna(name) and pd.notna(mins):
                 apps.append(f"{name} ({fmt_duration(int(mins))})")
         rows.append({
