@@ -82,16 +82,47 @@ streamlit run app.py
 
 ---
 
+## 🔄 Development Workflow
+
+> For every task: **Develop → Test → Push → Next task**
+
+1. Create a new branch: `git checkout -b feature/task-name`
+2. Develop the feature
+3. Test the app: `streamlit run app.py`
+4. Commit and push: `git add . && git commit -m "..." && git push`
+5. Merge to main: `git checkout main && git merge feature/task-name`
+6. Move to next sprint
+
+---
+
+## 🏃 Sprint Plan
+
+| Sprint | Branch | Task | Status |
+|---|---|---|---|
+| 0 | `feature/data-loading` | Data loading + helper functions | ✅ Done |
+| 0 | `feature/charts` | All charts and visualizations | ✅ Done |
+| 0 | `feature/weekly-viewer` | Weekly raw data viewer | ✅ Done |
+| 1 | `feature/csv-upload` | CSV file upload via UI | 🔲 Todo |
+| 2 | `feature/error-handling` | try/except error handling | 🔲 Todo |
+| 3 | `feature/logging` | Python logging module | 🔲 Todo |
+| 4 | `feature/formatting` | Code formatting with Black | 🔲 Todo |
+
+---
+
 ## 📋 To-Do List
 
 - [x] Define CSV format
 - [x] Enter data for Weeks 1–4
-- [ ] Write `app.py` → Streamlit application
-- [ ] Write `requirements.txt`
-- [ ] Build Overview page
-- [ ] Build Weekly Detail page
-- [ ] Build App Analysis page
-- [ ] Test the app
+- [x] Write `app.py` → Streamlit application
+- [x] Write `requirements.txt`
+- [x] Build Overview page
+- [x] Build Weekly Detail page
+- [x] Build App Analysis page
+- [x] Test the app
+- [ ] CSV file upload via UI
+- [ ] Error handling (try/except)
+- [ ] Logging
+- [ ] Code formatting (Black)
 
 ---
 
