@@ -1,6 +1,6 @@
 # 📱 Bildschirmzeit Dashboard
 
-Ein interaktives Dashboard zur Auswertung persönlicher Bildschirmzeit-Daten über mehrere Wochen. Visualisiert tägliche Nutzungszeiten, meistgenutzte Apps und wöchentliche Trends.
+Ein interaktives Dashboard zur Auswertung persönlicher iPhone-Bildschirmzeit-Daten über mehrere Wochen. Visualisiert tägliche Nutzungszeiten, meistgenutzte Apps und wöchentliche Trends — mit CSV-Upload direkt über die Benutzeroberfläche.
 
 ---
 
@@ -15,6 +15,15 @@ pip install -r requirements.txt
 ```bash
 streamlit run app.py
 ```
+
+---
+
+## Features
+
+- **CSV-Upload via UI** — Neue Wochen direkt in der Sidebar hochladen, ohne Dateien manuell zu verschieben
+- **Error Handling** — Ungültige oder fehlende Dateien werden mit einer deutschen Fehlermeldung abgefangen, die App stürzt nicht ab
+- **Logging** — Alle Lade- und Upload-Vorgänge werden mit Zeitstempel im Terminal protokolliert
+- **Black Formatting** — Code ist einheitlich nach PEP-8-Standard formatiert
 
 ---
 
@@ -48,7 +57,7 @@ Tabellenansicht der Rohdaten, wochenweise filterbar. Zeigt Datum, Gesamtbildschi
 
 ## Datenformat
 
-Die CSV-Dateien müssen im **Projektordner** liegen (nicht in einem Unterordner) und dem folgenden Namensschema entsprechen:
+Die CSV-Dateien müssen im **Projektordner** liegen und dem folgenden Namensschema entsprechen:
 
 ```
 woche_1.csv
@@ -65,3 +74,15 @@ Jede Datei muss folgende Spalten enthalten:
 | `gesamte bildschirmzeit` | Gesamtzeit in Minuten |
 | `app1_adi` – `app5_adi` | Name der App (Platz 1–5) |
 | `app1_sure` – `app5_sure` | Nutzungszeit der App in Minuten |
+
+---
+
+## Technologien
+
+| Bibliothek | Zweck |
+|---|---|
+| `streamlit` | Web-App Framework |
+| `pandas` | Datenverarbeitung |
+| `plotly` | Interaktive Diagramme |
+| `logging` | Protokollierung |
+| `black` | Code-Formatierung |
