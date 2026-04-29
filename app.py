@@ -12,12 +12,21 @@ import streamlit as st
 def load_data() -> pd.DataFrame:
     """Read all woche_X.csv files and combine into one DataFrame."""
     files = sorted(glob.glob("woche_*.csv"))
+    if not files:
+        st.error("Keine CSV-Dateien gefunden. Bitte mindestens eine woche_X.csv Datei hochladen.")
+        st.stop()
     frames = []
     for f in files:
-        df = pd.read_csv(f)
-        week_num = int(f.split("_")[1].split(".")[0])
-        df["woche"] = week_num
-        frames.append(df)
+        try:
+            df = pd.read_csv(f)
+            week_num = int(f.split("_")[1].split(".")[0])
+            df["woche"] = week_num
+            frames.append(df)
+        except Exception as e:
+            st.warning(f"{f} konnte nicht geladen werden: {e}")
+    if not frames:
+        st.error("Keine gültigen CSV-Dateien gefunden.")
+        st.stop()
     combined = pd.concat(frames, ignore_index=True)
     combined["datum"] = pd.to_datetime(combined["datum"])
     combined = combined.sort_values("datum").reset_index(drop=True)
@@ -384,11 +393,20 @@ with st.sidebar:
     uploaded_file = st.file_uploader("CSV-Datei auswählen", type="csv")
 
     if uploaded_file is not None:
-        target_path = f"woche_{week_num}.csv"
-        with open(target_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.success(f"{target_path} gespeichert!")
-        st.rerun()
+        try:
+            test_df = pd.read_csv(uploaded_file)
+            required_cols = ["datum", "gesamte bildschirmzeit"]
+            missing = [c for c in required_cols if c not in test_df.columns]
+            if missing:
+                st.error(f"Fehlende Spalten: {', '.join(missing)}")
+            else:
+                target_path = f"woche_{week_num}.csv"
+                with open(target_path, "wb") as f:
+                    f.write(uploaded_file.getvalue())
+                st.success(f"{target_path} gespeichert!")
+                st.rerun()
+        except Exception as e:
+            st.error(f"Datei konnte nicht gelesen werden: {e}")
 
 df = filter_by_week(df_raw, selected_week)
 app_df = filter_by_week(app_df_all, selected_week)
