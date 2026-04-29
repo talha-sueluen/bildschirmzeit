@@ -66,6 +66,8 @@ streamlit
 pandas
 plotly
 glob
+logging
+black
 ```
 
 ---
@@ -84,14 +86,17 @@ streamlit run app.py
 
 ## 🔄 Development Workflow
 
-> For every task: **Develop → Test → Push → Next task**
+> For every task: **Develop → Format → Commit → Push → Merge → Next task**
 
 1. Create a new branch: `git checkout -b feature/task-name`
 2. Develop the feature
-3. Test the app: `streamlit run app.py`
-4. Commit and push: `git add . && git commit -m "..." && git push`
-5. Merge to main: `git checkout main && git merge feature/task-name`
-6. Move to next sprint
+3. Format code: `python -m black app.py`
+4. Test the app: `streamlit run app.py`
+5. Commit: `git add app.py && git commit -m "..."`
+6. Push branch: `git push origin feature/task-name`
+7. Merge to main: `git checkout main && git merge --no-ff feature/task-name`
+8. Push main: `git push origin main`
+9. Move to next sprint
 
 ---
 
@@ -102,10 +107,10 @@ streamlit run app.py
 | 0 | `feature/data-loading` | Data loading + helper functions | ✅ Done |
 | 0 | `feature/charts` | All charts and visualizations | ✅ Done |
 | 0 | `feature/weekly-viewer` | Weekly raw data viewer | ✅ Done |
-| 1 | `feature/csv-upload` | CSV file upload via UI | 🔲 Todo |
-| 2 | `feature/error-handling` | try/except error handling | 🔲 Todo |
-| 3 | `feature/logging` | Python logging module | 🔲 Todo |
-| 4 | `feature/formatting` | Code formatting with Black | 🔲 Todo |
+| 1 | `feature/csv-upload` | CSV file upload via UI | ✅ Done |
+| 2 | `feature/error-handling` | try/except error handling | ✅ Done |
+| 3 | `feature/logging` | Python logging module | ✅ Done |
+| 4 | `feature/formatting` | Code formatting with Black | ✅ Done |
 
 ---
 
@@ -119,10 +124,10 @@ streamlit run app.py
 - [x] Build Weekly Detail page
 - [x] Build App Analysis page
 - [x] Test the app
-- [ ] CSV file upload via UI
-- [ ] Error handling (try/except)
-- [ ] Logging
-- [ ] Code formatting (Black)
+- [x] CSV file upload via UI
+- [x] Error handling (try/except)
+- [x] Logging
+- [x] Code formatting (Black)
 
 ---
 
