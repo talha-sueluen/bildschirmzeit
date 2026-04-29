@@ -1,9 +1,16 @@
 import glob
+import logging
 import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-8s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 # ============================================================
 # Data Loading
@@ -13,6 +20,7 @@ def load_data() -> pd.DataFrame:
     """Read all woche_X.csv files and combine into one DataFrame."""
     files = sorted(glob.glob("woche_*.csv"))
     if not files:
+        logging.error("load_data: keine CSV-Dateien gefunden")
         st.error("Keine CSV-Dateien gefunden. Bitte mindestens eine woche_X.csv Datei hochladen.")
         st.stop()
     frames = []
@@ -22,14 +30,18 @@ def load_data() -> pd.DataFrame:
             week_num = int(f.split("_")[1].split(".")[0])
             df["woche"] = week_num
             frames.append(df)
+            logging.info(f"load_data: {f} geladen ({len(df)} Zeilen)")
         except Exception as e:
+            logging.warning(f"load_data: {f} übersprungen — {e}")
             st.warning(f"{f} konnte nicht geladen werden: {e}")
     if not frames:
+        logging.error("load_data: keine gültigen Dateien")
         st.error("Keine gültigen CSV-Dateien gefunden.")
         st.stop()
     combined = pd.concat(frames, ignore_index=True)
     combined["datum"] = pd.to_datetime(combined["datum"])
     combined = combined.sort_values("datum").reset_index(drop=True)
+    logging.info(f"load_data: {len(combined)} Zeilen gesamt aus {len(frames)} Dateien")
     return combined
 
 
@@ -398,14 +410,17 @@ with st.sidebar:
             required_cols = ["datum", "gesamte bildschirmzeit"]
             missing = [c for c in required_cols if c not in test_df.columns]
             if missing:
+                logging.warning(f"upload: fehlende Spalten — {missing}")
                 st.error(f"Fehlende Spalten: {', '.join(missing)}")
             else:
                 target_path = f"woche_{week_num}.csv"
                 with open(target_path, "wb") as f:
                     f.write(uploaded_file.getvalue())
+                logging.info(f"upload: {target_path} gespeichert ({len(test_df)} Zeilen)")
                 st.success(f"{target_path} gespeichert!")
                 st.rerun()
         except Exception as e:
+            logging.error(f"upload: Datei konnte nicht gelesen werden — {e}")
             st.error(f"Datei konnte nicht gelesen werden: {e}")
 
 df = filter_by_week(df_raw, selected_week)
