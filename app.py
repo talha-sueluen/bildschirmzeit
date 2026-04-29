@@ -1,4 +1,5 @@
 import glob
+import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -375,6 +376,19 @@ with st.sidebar:
     st.header("Filter")
     week_options = ["Alle"] + [f"Woche {i}" for i in sorted(df_raw["woche"].unique())]
     selected_week = st.selectbox("Woche", week_options)
+
+    st.divider()
+
+    st.header("Neue Woche hinzufügen")
+    week_num = st.number_input("Wochennummer", min_value=1, max_value=52, value=5)
+    uploaded_file = st.file_uploader("CSV-Datei auswählen", type="csv")
+
+    if uploaded_file is not None:
+        target_path = f"woche_{week_num}.csv"
+        with open(target_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.success(f"{target_path} gespeichert!")
+        st.rerun()
 
 df = filter_by_week(df_raw, selected_week)
 app_df = filter_by_week(app_df_all, selected_week)
