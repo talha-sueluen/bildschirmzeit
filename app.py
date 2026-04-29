@@ -16,12 +16,15 @@ logging.basicConfig(
 # Data Loading
 # ============================================================
 
+
 def load_data() -> pd.DataFrame:
     """Read all woche_X.csv files and combine into one DataFrame."""
     files = sorted(glob.glob("woche_*.csv"))
     if not files:
         logging.error("load_data: keine CSV-Dateien gefunden")
-        st.error("Keine CSV-Dateien gefunden. Bitte mindestens eine woche_X.csv Datei hochladen.")
+        st.error(
+            "Keine CSV-Dateien gefunden. Bitte mindestens eine woche_X.csv Datei hochladen."
+        )
         st.stop()
     frames = []
     for f in files:
@@ -49,6 +52,7 @@ def load_data() -> pd.DataFrame:
 # Helper Functions
 # ============================================================
 
+
 def fmt_duration(minutes: int) -> str:
     """Convert minutes to a readable string, e.g. 185 → '3h 5min'."""
     h, m = divmod(int(minutes), 60)
@@ -60,19 +64,32 @@ def fmt_duration(minutes: int) -> str:
 
 
 WEEKDAY_LABELS = {
-    0: "Montag", 1: "Dienstag", 2: "Mittwoch", 3: "Donnerstag", 4: "Freitag", 5: "Samstag", 6: "Sonntag"
+    0: "Montag",
+    1: "Dienstag",
+    2: "Mittwoch",
+    3: "Donnerstag",
+    4: "Freitag",
+    5: "Samstag",
+    6: "Sonntag",
 }
 
 # Varied, pleasant palette for categorical use
 PALETTE = [
-    "#5B8DB8", "#E07B54", "#6BAE75", "#C97CB4",
-    "#E8C84A", "#7ECECA", "#D47575", "#9B7FD4",
+    "#5B8DB8",
+    "#E07B54",
+    "#6BAE75",
+    "#C97CB4",
+    "#E8C84A",
+    "#7ECECA",
+    "#D47575",
+    "#9B7FD4",
 ]
 
 
 # ============================================================
 # Data Processing
 # ============================================================
+
 
 def melt_apps(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -87,12 +104,14 @@ def melt_apps(df: pd.DataFrame) -> pd.DataFrame:
             app = row.get(f"app{i}_name")
             mins = row.get(f"app{i}_zeit")
             if pd.notna(app) and pd.notna(mins):
-                records.append({
-                    "datum": row["datum"],
-                    "woche": row["woche"],
-                    "app": str(app).strip(),
-                    "minutes": int(mins),
-                })
+                records.append(
+                    {
+                        "datum": row["datum"],
+                        "woche": row["woche"],
+                        "app": str(app).strip(),
+                        "minutes": int(mins),
+                    }
+                )
     return pd.DataFrame(records)
 
 
@@ -173,16 +192,18 @@ def chart_top_apps(app_df: pd.DataFrame) -> go.Figure:
     data = top_apps(app_df)
     data["label"] = data["minutes"].apply(fmt_duration)
     colors = [PALETTE[i % len(PALETTE)] for i in range(len(data))]
-    fig = go.Figure(go.Bar(
-        x=data["minutes"],
-        y=data["app"],
-        orientation="h",
-        text=data["label"],
-        textposition="outside",
-        marker_color=colors,
-        customdata=data["label"],
-        hovertemplate="<b>%{y}</b><br>%{customdata}<extra></extra>",
-    ))
+    fig = go.Figure(
+        go.Bar(
+            x=data["minutes"],
+            y=data["app"],
+            orientation="h",
+            text=data["label"],
+            textposition="outside",
+            marker_color=colors,
+            customdata=data["label"],
+            hovertemplate="<b>%{y}</b><br>%{customdata}<extra></extra>",
+        )
+    )
     fig.update_layout(
         **_LAYOUT,
         yaxis=dict(autorange="reversed"),
@@ -251,6 +272,7 @@ def chart_weekday_pattern(df: pd.DataFrame) -> go.Figure:
     vals = wd["gesamte bildschirmzeit"].tolist()
     # Map values to a blue color scale (lighter = less, darker = more)
     min_v, max_v = min(vals), max(vals)
+
     def intensity_color(v):
         t = (v - min_v) / (max_v - min_v) if max_v > min_v else 0.5
         r = int(91 + (28 - 91) * t)
@@ -260,15 +282,17 @@ def chart_weekday_pattern(df: pd.DataFrame) -> go.Figure:
 
     colors = [intensity_color(v) for v in vals]
     dur_labels = [fmt_duration(round(v)) for v in vals]
-    fig = go.Figure(go.Bar(
-        x=wd["label"],
-        y=vals,
-        text=dur_labels,
-        textposition="outside",
-        marker_color=colors,
-        customdata=dur_labels,
-        hovertemplate="<b>%{x}</b><br>Ø %{customdata}<extra></extra>",
-    ))
+    fig = go.Figure(
+        go.Bar(
+            x=wd["label"],
+            y=vals,
+            text=dur_labels,
+            textposition="outside",
+            marker_color=colors,
+            customdata=dur_labels,
+            hovertemplate="<b>%{x}</b><br>Ø %{customdata}<extra></extra>",
+        )
+    )
     fig.update_layout(
         **_LAYOUT,
         xaxis=dict(title=""),
@@ -318,17 +342,19 @@ def chart_app_share(app_df: pd.DataFrame) -> go.Figure:
     top_total = data["minutes"].sum()
     rest = total - top_total
     if rest > 0:
-        data = pd.concat([
-            data,
-            pd.DataFrame([{"app": "Sonstige", "minutes": rest}])
-        ], ignore_index=True)
-    fig = go.Figure(go.Pie(
-        labels=data["app"],
-        values=data["minutes"],
-        hole=0.4,
-        textinfo="label+percent",
-        marker=dict(colors=PALETTE[:len(data)]),
-    ))
+        data = pd.concat(
+            [data, pd.DataFrame([{"app": "Sonstige", "minutes": rest}])],
+            ignore_index=True,
+        )
+    fig = go.Figure(
+        go.Pie(
+            labels=data["app"],
+            values=data["minutes"],
+            hole=0.4,
+            textinfo="label+percent",
+            marker=dict(colors=PALETTE[: len(data)]),
+        )
+    )
     hover_durations = [fmt_duration(int(v)) for v in data["minutes"]]
     fig.update_traces(
         customdata=hover_durations,
@@ -344,6 +370,7 @@ def chart_app_share(app_df: pd.DataFrame) -> go.Figure:
 # ============================================================
 # Weekly File Viewer
 # ============================================================
+
 
 def show_weekly_raw(df_raw: pd.DataFrame) -> None:
     """Dropdown to pick a week and display its CSV data in German."""
@@ -366,11 +393,13 @@ def show_weekly_raw(df_raw: pd.DataFrame) -> None:
             mins = r.get(f"app{i}_zeit")
             if pd.notna(name) and pd.notna(mins):
                 apps.append(f"{name} ({fmt_duration(int(mins))})")
-        rows.append({
-            "Datum": r["datum"],
-            "Bildschirmzeit": fmt_duration(int(r["gesamte bildschirmzeit"])),
-            "Top Apps": " · ".join(apps),
-        })
+        rows.append(
+            {
+                "Datum": r["datum"],
+                "Bildschirmzeit": fmt_duration(int(r["gesamte bildschirmzeit"])),
+                "Top Apps": " · ".join(apps),
+            }
+        )
 
     st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
@@ -416,7 +445,9 @@ with st.sidebar:
                 target_path = f"woche_{week_num}.csv"
                 with open(target_path, "wb") as f:
                     f.write(uploaded_file.getvalue())
-                logging.info(f"upload: {target_path} gespeichert ({len(test_df)} Zeilen)")
+                logging.info(
+                    f"upload: {target_path} gespeichert ({len(test_df)} Zeilen)"
+                )
                 st.success(f"{target_path} gespeichert!")
                 st.rerun()
         except Exception as e:
@@ -435,7 +466,10 @@ top_app = app_df.groupby("app")["minutes"].sum().idxmax()
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Gesamte Bildschirmzeit", fmt_duration(total_mins))
 col2.metric("Tagesdurchschnitt", fmt_duration(round(avg_daily)))
-col3.metric("Längster Tag", f"{max_row['datum'].strftime('%d. %b')} · {fmt_duration(int(max_row['gesamte bildschirmzeit']))}")
+col3.metric(
+    "Längster Tag",
+    f"{max_row['datum'].strftime('%d. %b')} · {fmt_duration(int(max_row['gesamte bildschirmzeit']))}",
+)
 col4.metric("Meist genutzte App", top_app)
 
 st.divider()
