@@ -415,7 +415,7 @@ st.set_page_config(
 )
 
 st.title("📱 Bildschirmzeit Dashboard")
-st.caption("16. März – 12. April 2025 · 4 Wochen Bildschirmzeit-Daten")
+st.caption("16. März – 12. April 2026 · 4 Wochen Bildschirmzeit-Daten")
 
 # --- Daten laden ---
 df_raw = load_data()
