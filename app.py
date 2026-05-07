@@ -323,11 +323,12 @@ def chart_app_trend(app_df: pd.DataFrame, top_n: int = 5) -> go.Figure:
     fig.update_traces(
         hovertemplate="<b>%{customdata[0]}</b><br>Woche %{x}<br>%{customdata[1]}<extra></extra>"
     )
+    all_weeks = sorted(app_df["woche"].unique())
     fig.update_layout(
         **_LAYOUT,
         xaxis=dict(
-            tickvals=[1, 2, 3, 4],
-            ticktext=["Woche 1", "Woche 2", "Woche 3", "Woche 4"],
+            tickvals=all_weeks,
+            ticktext=[f"Woche {w}" for w in all_weeks],
         ),
         yaxis=dict(gridcolor="rgba(128,128,128,0.15)"),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
@@ -375,9 +376,10 @@ def chart_app_share(app_df: pd.DataFrame) -> go.Figure:
 def show_weekly_raw(df_raw: pd.DataFrame) -> None:
     """Dropdown to pick a week and display its CSV data in German."""
     st.subheader("Wochendaten")
+    available_weeks = sorted(df_raw["woche"].unique())
     woche_nr = st.selectbox(
         "Woche auswählen",
-        options=[1, 2, 3, 4],
+        options=available_weeks,
         format_func=lambda w: f"Woche {w}",
         key="raw_woche_select",
     )
@@ -415,7 +417,7 @@ st.set_page_config(
 )
 
 st.title("📱 Bildschirmzeit Dashboard")
-st.caption("16. März – 12. April 2026 · 4 Wochen Bildschirmzeit-Daten")
+st.caption("16. März – 3. Mai 2026 · 7 Wochen Bildschirmzeit-Daten")
 
 # --- Daten laden ---
 df_raw = load_data()
